@@ -7,6 +7,7 @@
 #pragma warning(disable:4996)
 #define MAX_CHARS 26
 #define VALID_INPUT 1
+#define NEW_PRODUCT 0
 #define ITEM_SIZE (sizeof(int) + NAME_SIZE + CATEGORY_SIZE + sizeof(int) + sizeof(float)) //to be used for accessing the index of a file
 
 typedef struct {
@@ -21,7 +22,7 @@ long indexFilePosition(int productID);
 long CalculateFileSize(FILE* pFile);
 int NumElements(FILE* pFile);
 StoreItems* ReadDataFromID(FILE* pFile, int productID);
-bool AddNewProduct(char newName[], char newCategory[], int newQuantity, float newPrice);
+bool AddNewProduct(FILE* pFile, StoreItems* newProduct);
 StoreItems GetNewProductInfo(void); //from user
 void PrintProductInfo(StoreItems* product);
 
@@ -62,6 +63,8 @@ int main(void)
     //print struct info
 
     //create new instance of struct, from user input
+
+    //access a product by it's index and change the info
 
 
     //might write an arbitrary amount of data to the file initially to use later for read, update, delete
@@ -148,9 +151,25 @@ StoreItems* ReadDataFromID(FILE* pFile, int productID)
     return &readItem;
 }
 
-bool AddNewProduct(char newName[], char newCategory[], int newQuantity, float newPrice)
+//NAME:
+//PARAMETER: &newProduct (pass as a reference?)
+//DESCRIPTION:
+//RETURNS: 
+bool AddNewProduct(FILE* pFile, StoreItems* newProduct)
 {
-
+    if (newProduct->productID != NEW_PRODUCT)
+    {
+        //means there was an error setting up the new product or
+        //this function was called when it wasn't supposed to be
+        return false;
+    }
+    //need to assign appropriate product ID
+    int newID = NumElements(pFile);
+    newID += 1; //index by one
+    newProduct->productID = newID;
+    //now write to file
+    fseek(pFile, 0, SEEK_END); 
+    fwrite(newProduct, sizeof(StoreItems), 1, pFile);
     return true;
 }
 
