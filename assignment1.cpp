@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #pragma warning(disable:4996)
-#define MAX_CHARS 25
+#define MAX_CHARS 26
+#define VALID_INPUT 1
 #define ITEM_SIZE (sizeof(int) + NAME_SIZE + CATEGORY_SIZE + sizeof(int) + sizeof(float)) //to be used for accessing the index of a file
 
 typedef struct {
@@ -20,6 +21,9 @@ long indexFilePosition(int productID);
 long CalculateFileSize(FILE* pFile);
 int NumElements(FILE* pFile);
 StoreItems* ReadDataFromID(FILE* pFile, int productID);
+bool AddNewProduct(char newName[], char newCategory[], int newQuantity, float newPrice);
+StoreItems GetNewProductInfo(void); //from user
+void PrintProductInfo(StoreItems* product);
 
 int main(void)
 {
@@ -62,6 +66,7 @@ int main(void)
 
     //might write an arbitrary amount of data to the file initially to use later for read, update, delete
 
+    /*
     StoreItems fileData = { 1, "Smartphone", "Electronics", 50, 899.99 };
     StoreItems fileData2 = { 2, "Smartphone", "Electronics", 30, 799.99 };
     StoreItems fileData3 = { 3, "Laptop", "Electronics", 30, 599.99 };
@@ -77,6 +82,12 @@ int main(void)
     fseek(pFile, sizeof(StoreItems) * 2, SEEK_SET);
     fread(&readItem, sizeof(StoreItems), 1, pFile);
     printf("%d, %s, %s, %d, %f\n", readItem.productID, readItem.name, readItem.category, readItem.quantity, readItem.price);
+    */
+
+    //TESTING
+    StoreItems newItem = GetNewProductInfo();
+    PrintProductInfo(&newItem);
+    
 
     if (fclose(pFile) == EOF) {
         printf("Error closing file\n\n");
@@ -135,4 +146,92 @@ StoreItems* ReadDataFromID(FILE* pFile, int productID)
     StoreItems readItem; 
     fread(&readItem, sizeof(StoreItems), 1, pFile);
     return &readItem;
+}
+
+bool AddNewProduct(char newName[], char newCategory[], int newQuantity, float newPrice)
+{
+
+    return true;
+}
+
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: StoreItems by value
+StoreItems GetNewProductInfo(void)
+{
+    char newName[MAX_CHARS] = { 0 };
+    char newCategory[MAX_CHARS] = { 0 };
+    int newQuantity = 0;
+    float newPrice = 0;
+    printf("Enter the name of the new product: ");
+    while (true) //user cannnot exit this should i make an option to do so?
+    {
+        if (scanf("%25s", newName) != VALID_INPUT)
+        {
+            printf("Invalid Input: Please enter a name 25 characters or less\n"); //test that it only accepts 25 chars
+            printf("Input: ");
+        }
+        else
+        {
+            break;
+        }
+    }
+    printf("Enter the category of the new product: ");
+    while (true)
+    {
+        if (scanf("%25s", newCategory) != VALID_INPUT)
+        {
+            printf("Invalid Input: Please enter a name 25 characters or less\n"); //test that it only accepts 25 chars
+            printf("Input: ");
+        }
+        else
+        {
+            break;
+        }
+    }
+    printf("Enter the quantity: ");
+    while (true)
+    {
+        if (scanf("%d", &newQuantity) != VALID_INPUT)
+        {
+            printf("Invalid Input: Please enter an integer value\n");
+            printf("Input: ");
+        }
+        else
+        {
+            break;
+        }
+    }
+    printf("Enter the price: ");
+    while (true)
+    {
+        if (scanf("%f", &newPrice) != VALID_INPUT)
+        {
+            printf("Invalid Input: Please enter a float value\n");
+            printf("Input: ");
+        }
+        else
+        {
+            break;
+        }
+    }
+    //add to struct
+    StoreItems newProduct;
+    newProduct.productID = 0;
+    strcpy(newProduct.name, newName);
+    strcpy(newProduct.category, newCategory);
+    newProduct.quantity = newQuantity;
+    newProduct.price = newPrice;
+    //printf("%d, %s, %s, %d, %f\n", newProduct.productID, newProduct.name, newProduct.category, newProduct.quantity, newProduct.price);
+    return newProduct;
+}
+
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
+void PrintProductInfo(StoreItems* product)
+{
+    printf("%d, %s, %s, %d, %f\n", product->productID, product->name, product->category, product->quantity, product->price);
 }
