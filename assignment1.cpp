@@ -6,7 +6,7 @@
 #include <string.h>
 #pragma warning(disable:4996)
 #define MAX_CHARS 25
-#define ITEM_SIZE (sizeof(int) + NAME_SIZE + CATEGORY_SIZE + sizeof(int) + sizeof(float)) //to be used for accessing the index of a file
+//#define ITEM_SIZE (sizeof(int) + NAME_SIZE + CATEGORY_SIZE + sizeof(int) + sizeof(float)) //to be used for accessing the index of a file 
 
 long indexFilePosition(int productID);
 
@@ -27,6 +27,12 @@ int main(void)
         return 1;
     }
 
+    //might write an arbitrary amount of data to the file initially to use later for read, update, delete
+
+    StoreItems fileData = { 1, "Smartphone", "Electronics", 50, 899.99 };
+
+
+    fwrite(&fileData, sizeof(StoreItems), 1, pFile);
 
 
     return 0;
