@@ -19,6 +19,7 @@ typedef struct {
 long indexFilePosition(int productID);
 long CalculateFileSize(FILE* pFile);
 int NumElements(FILE* pFile);
+StoreItems* ReadDataFromID(FILE* pFile, int productID);
 
 int main(void)
 {
@@ -107,8 +108,31 @@ long CalculateFileSize(FILE* pFile)
     return totalSize;
 }
 
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
 //relies on other file to return proper number of bytes, may combine these two later?
 int NumElements(FILE* pFile)
 {
     return CalculateFileSize(pFile) / sizeof(StoreItems);
+}
+
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
+StoreItems* ReadDataFromID(FILE* pFile, int productID)
+{
+    if (productID <= 0 || productID > NumElements(pFile))
+    {
+        printf("Invalid Product ID, Please Enter within Range 1 - %d\n\n", NumElements(pFile)); //should i put errors in main function?
+        return NULL;
+    }
+
+    int fileIndex = (productID - 1) * sizeof(StoreItems);
+    fseek(pFile, fileIndex, SEEK_SET);
+    StoreItems readItem; 
+    fread(&readItem, sizeof(StoreItems), 1, pFile);
+    return &readItem;
 }
