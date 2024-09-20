@@ -6,6 +6,9 @@
 #include <string.h>
 #pragma warning(disable:4996)
 #define MAX_CHARS 25
+#define ITEM_SIZE (sizeof(int) + NAME_SIZE + CATEGORY_SIZE + sizeof(int) + sizeof(float)) //to be used for accessing the index of a file
+
+long indexFilePosition(int productID);
 
 int main(void)
 {
@@ -17,8 +20,28 @@ int main(void)
         float price;
     }StoreItems;
 
+    FILE* pFile = fopen("StoreCatalog", "wb+");
+    if (pFile == NULL)
+    {
+        printf("Unable to open file\n");
+        return 1;
+    }
+
 
 
     return 0;
 }
 
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
+long indexFilePosition(int productID)
+{
+
+}
+
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
