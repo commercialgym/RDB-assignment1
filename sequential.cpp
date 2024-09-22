@@ -17,16 +17,25 @@ typedef struct {
 	float price;
 }StoreItems;
 
+long CalculateFileSize(FILE* pFile);
+int NumElements(FILE* pFile);
+bool ReadDataFromFile(FILE* pFile, StoreItems **productCatalog, int count);
+
 
 int main(void)
 {
-    
+	StoreItems* productCatalog = NULL;
+
 	FILE* pFile = fopen("StoreCatalog.dat", "rb+");
 	if (pFile == NULL)
 	{
 		printf("Unable to open file\n");
 		return 1;
 	}
+
+	int numProducts = NumElements(pFile);
+
+	ReadDataFromFile(pFile, &productCatalog, numProducts);
 
 	//read the data from the file sequentially
 
@@ -65,3 +74,40 @@ int main(void)
 	return 0;
 }
 
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
+long CalculateFileSize(FILE* pFile)
+{
+	long currentPos = ftell(pFile); //capture the current fp position
+	fseek(pFile, 0, SEEK_END); //reminder that this means the fp is placed at the end, should i move it to the beginning?
+	long totalSize = ftell(pFile);
+	fseek(pFile, currentPos, SEEK_SET); //return the fp position to the previous
+	return totalSize;
+}
+
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
+//relies on other file to return proper number of bytes, may combine these two later?
+int NumElements(FILE* pFile)
+{
+	return CalculateFileSize(pFile) / sizeof(StoreItems);
+}
+
+bool ReadDataFromFile(FILE* pFile, StoreItems **productCatalog, int count)
+{
+	int index = 0;
+	while (index < count)
+	{
+		if (fread(productCatalog[index], sizeof(StoreItems), 1, pFile) != VALID_INPUT)
+		{
+			printf("Error Reading From File\n");
+			return false;
+		}
+		index++;
+	}
+	return true;
+}
