@@ -20,6 +20,7 @@ typedef struct {
 long CalculateFileSize(FILE* pFile);
 int NumElements(FILE* pFile);
 bool ReadDataFromFile(FILE* pFile, StoreItems **productCatalog, int count);
+void PrintDataFromMemory(StoreItems** productCatalog, int counter);
 
 
 int main(void)
@@ -36,6 +37,8 @@ int main(void)
 	int numProducts = NumElements(pFile);
 
 	ReadDataFromFile(pFile, &productCatalog, numProducts);
+
+	PrintDataFromMemory(&productCatalog, numProducts);
 
 	//read the data from the file sequentially
 
@@ -55,6 +58,7 @@ int main(void)
 
 		//delete a product
 
+	/*
 	FILE* pFile = fopen("StoreCatalog.dat", "wb");
 	if (pFile == NULL)
 	{
@@ -69,7 +73,7 @@ int main(void)
 		printf("Error closing file\n\n");
 		clearerr(pFile);
 	}
-
+	*/
 
 	return 0;
 }
@@ -91,7 +95,6 @@ long CalculateFileSize(FILE* pFile)
 //PARAMETER:
 //DESCRIPTION:
 //RETURNS: 
-//relies on other file to return proper number of bytes, may combine these two later?
 int NumElements(FILE* pFile)
 {
 	return CalculateFileSize(pFile) / sizeof(StoreItems);
@@ -99,15 +102,40 @@ int NumElements(FILE* pFile)
 
 bool ReadDataFromFile(FILE* pFile, StoreItems **productCatalog, int count)
 {
+	*productCatalog = (StoreItems*)malloc(count * sizeof(StoreItems));
+	if (*productCatalog == NULL)
+	{
+		printf("Error Allocating Memory\n");
+		return false;
+	}
+	
 	int index = 0;
 	while (index < count)
 	{
-		if (fread(productCatalog[index], sizeof(StoreItems), 1, pFile) != VALID_INPUT)
+		if (fread(&(*productCatalog)[index], sizeof(StoreItems), 1, pFile) != VALID_INPUT)
 		{
 			printf("Error Reading From File\n");
 			return false;
 		}
+		printf("Successful Read: %d\n", index);
 		index++;
 	}
 	return true;
+}
+
+//NAME:
+//PARAMETER:
+//DESCRIPTION:
+//RETURNS: 
+void PrintDataFromMemory(StoreItems** productCatalog, int counter)
+{
+	printf("Product Catalog From File:");
+	for (int index = 0; index < counter; index++)
+	{	
+		printf("\nProduct ID: %d\n", (*productCatalog)[index].productID);
+		printf("Name: %s\n", (*productCatalog)[index].name);
+		printf("Category: %s\n", (*productCatalog)[index].category);
+		printf("Quantity: %d\n", (*productCatalog)[index].quantity);
+		printf("Price: %.2f\n", (*productCatalog)[index].price);
+	}
 }
